@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager Legacy - Sistema Simple</title>
+
+    <!-- CSS propio -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- DataTables Bootstrap 5 CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+</head>
+<body>
+<div class="container my-3">
+    <h1 class="text-center mb-4">Task Manager Legacy</h1>
+
+    <!-- Panel de Login -->
+    <div id="loginPanel" class="panel border p-3">
+        <h2>Login</h2>
+        <div class="form-group mb-2">
+            <label>Usuario:</label>
+            <input type="text" id="username" value="admin" class="form-control">
+        </div>
+        <div class="form-group mb-2">
+            <label>Contraseña:</label>
+            <input type="password" id="password" value="admin" class="form-control">
+        </div>
+        <button onclick="login()" class="btn btn-primary mt-2">Entrar</button>
+    </div>
+
+    <!-- Panel Principal -->
+    <div id="mainPanel" class="panel" style="display:none;">
+        <div class="header d-flex justify-content-between align-items-center mb-3 p-2 bg-light border">
+            <span>Usuario: <strong id="currentUser"></strong></span>
+            <button onclick="logout()" class="btn btn-danger btn-sm">Salir</button>
+        </div>
+
+        <!-- Pestañas -->
+        <ul class="nav nav-tabs mb-3" id="mainTabs">
+            <li class="nav-item"><button class="nav-link active" onclick="showTab('tasks')">Tareas</button></li>
+            <li class="nav-item"><button class="nav-link" onclick="showTab('projects')">Proyectos</button></li>
+            <li class="nav-item"><button class="nav-link" onclick="showTab('comments')">Comentarios</button></li>
+            <li class="nav-item"><button class="nav-link" onclick="showTab('search')">Búsqueda</button></li>
+            <li class="nav-item"><button class="nav-link" onclick="showTab('reports')">Reportes</button></li>
+        </ul>
+
+        <!-- TAB: Tareas -->
+        <div id="tasksTab" class="tab-content active">
+            <h2>Gestión de Tareas</h2>
+            <div class="form-section border p-3 mb-3 bg-light">
+                <h3>Nueva/Editar Tarea</h3>
+                <div class="row g-2">
+                    <div class="col-md-6"><label>Título:</label><input type="text" id="taskTitle" class="form-control"></div>
+                    <div class="col-md-6"><label>Descripción:</label><textarea id="taskDescription" rows="2" class="form-control"></textarea></div>
+                    <div class="col-md-3"><label>Estado:</label><select id="taskStatus" class="form-select">
+                        <option>Pendiente</option>
+                        <option>En Progreso</option>
+                        <option>Completada</option>
+                        <option>Bloqueada</option>
+                        <option>Cancelada</option>
+                    </select></div>
+                    <div class="col-md-3"><label>Prioridad:</label><select id="taskPriority" class="form-select">
+                        <option>Baja</option><option>Media</option><option>Alta</option><option>Crítica</option>
+                    </select></div>
+                    <div class="col-md-3"><label>Proyecto:</label><select id="taskProject" class="form-select"></select></div>
+                    <div class="col-md-3"><label>Asignado a:</label><select id="taskAssigned" class="form-select"></select></div>
+                    <div class="col-md-3"><label>Fecha Vencimiento:</label><input type="text" id="taskDueDate" placeholder="YYYY-MM-DD" class="form-control"></div>
+                    <div class="col-md-3"><label>Horas Estimadas:</label><input type="number" id="taskHours" step="0.5" class="form-control"></div>
+                </div>
+                <div class="mt-2">
+                    <button onclick="addTask()" class="btn btn-success btn-sm">Agregar</button>
+                    <button onclick="updateTask()" class="btn btn-primary btn-sm">Actualizar</button>
+                    <button onclick="deleteTask()" class="btn btn-danger btn-sm">Eliminar</button>
+                    <button onclick="clearTaskForm()" class="btn btn-secondary btn-sm">Limpiar</button>
+                </div>
+            </div>
+
+            <div class="table-section border p-2 mb-3">
+                <h3>Lista de Tareas</h3>
+                <table id="tasksTable" class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Título</th>
+                            <th>Estado</th>
+                            <th>Prioridad</th>
+                            <th>Proyecto</th>
+                            <th>Asignado</th>
+                            <th>Vencimiento</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tasksTableBody"></tbody>
+                </table>
+            </div>
+
+            <div class="stats border p-2 bg-light">
+                <strong>Estadísticas:</strong> <span id="statsText"></span>
+            </div>
+        </div>
+
+        <!-- TAB: Proyectos -->
+        <div id="projectsTab" class="tab-content">
+            <h2>Gestión de Proyectos</h2>
+            <div class="form-section border p-3 mb-3 bg-light">
+                <div class="mb-2"><label>Nombre:</label><input type="text" id="projectName" class="form-control"></div>
+                <div class="mb-2"><label>Descripción:</label><textarea id="projectDescription" rows="2" class="form-control"></textarea></div>
+                <button onclick="addProject()" class="btn btn-success btn-sm">Agregar</button>
+                <button onclick="updateProject()" class="btn btn-primary btn-sm">Actualizar</button>
+                <button onclick="deleteProject()" class="btn btn-danger btn-sm">Eliminar</button>
+            </div>
+            <div class="table-section border p-2">
+                <table class="table table-striped table-bordered">
+                    <thead><tr><th>ID</th><th>Nombre</th><th>Descripción</th></tr></thead>
+                    <tbody id="projectsTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TAB: Comentarios -->
+        <div id="commentsTab" class="tab-content">
+            <h2>Comentarios de Tareas</h2>
+            <div class="form-section border p-3 mb-3 bg-light">
+                <div class="mb-2"><label>ID Tarea:</label><input type="text" id="commentTaskId" class="form-control"></div>
+                <div class="mb-2"><label>Comentario:</label><textarea id="commentText" rows="2" class="form-control"></textarea></div>
+                <button onclick="addComment()" class="btn btn-success btn-sm">Agregar Comentario</button>
+                <button onclick="loadComments()" class="btn btn-primary btn-sm">Cargar Comentarios</button>
+            </div>
+            <div class="text-area-section border p-2">
+                <h3>Comentarios</h3>
+                <textarea id="commentsArea" rows="15" readonly class="form-control"></textarea>
+            </div>
+        </div>
+
+        <!-- TAB: Búsqueda -->
+        <div id="searchTab" class="tab-content">
+            <h2>Búsqueda Avanzada</h2>
+            <div class="form-section border p-3 mb-3 bg-light row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label for="searchText" class="form-label">Texto</label>
+                    <input type="text" id="searchText" class="form-control" placeholder="Buscar por título o descripción">
+                </div>
+                <div class="col-md-3">
+                    <label for="searchStatus" class="form-label">Estado</label>
+                    <select id="searchStatus" class="form-select">
+                        <option value="">Todos</option>
+                        <option>Pendiente</option>
+                        <option>En Progreso</option>
+                        <option>Completada</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="searchPriority" class="form-label">Prioridad</label>
+                    <select id="searchPriority" class="form-select">
+                        <option value="">Todas</option>
+                        <option>Baja</option>
+                        <option>Media</option>
+                        <option>Alta</option>
+                        <option>Crítica</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="searchProject" class="form-label">Proyecto</label>
+                    <select id="searchProject" class="form-select">
+                        <option value="">Todos</option>
+                    </select>
+                </div>
+                <div class="col-md-12">
+                    <button id="filterBtn" class="btn btn-primary mt-2">Filtrar</button>
+                    <button id="clearFilterBtn" class="btn btn-secondary mt-2">Limpiar</button>
+                </div>
+            </div>
+            <div class="table-section border p-2">
+                <table id="searchTable" class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Título</th>
+                            <th>Estado</th>
+                            <th>Prioridad</th>
+                            <th>Proyecto</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TAB: Reportes -->
+        <div id="reportsTab" class="tab-content">
+            <h2>Generación de Reportes</h2>
+            <div class="form-section border p-3 mb-3 bg-light">
+                <button onclick="generateReport('tasks')" class="btn btn-primary btn-sm">Reporte de Tareas</button>
+                <button onclick="generateReport('projects')" class="btn btn-primary btn-sm">Reporte de Proyectos</button>
+                <button onclick="generateReport('users')" class="btn btn-primary btn-sm">Reporte de Usuarios</button>
+                <button onclick="exportCSV()" class="btn btn-secondary btn-sm">Exportar a CSV</button>
+            </div>
+            <div class="text-area-section border p-2">
+                <textarea id="reportsArea" rows="20" readonly class="form-control"></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JS principal -->
+<script src="app.js"></script>
+</body>
+</html>
