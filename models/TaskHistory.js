@@ -11,7 +11,7 @@ const TaskHistorySchema = new Schema({
   action: {
     type: String,
     required: true
-    // Ej: CREATED, UPDATED, STATUS_CHANGE, DELETED
+ 
   },
 
   oldValue: String,

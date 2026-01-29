@@ -1,7 +1,7 @@
 import Task from "../models/Task.js";
 import Project from "../models/Project.js";
 
-// Obtener todas las tareas
+
 export const getTasks = async (req, res) => {
   try {
     const tasks = await Task.find()
@@ -14,7 +14,7 @@ export const getTasks = async (req, res) => {
   }
 };
 
-// Obtener tarea por ID
+
 export const getTaskById = async (req, res) => {
   try {
     const task = await Task.findById(req.params.id)
@@ -30,7 +30,7 @@ export const getTaskById = async (req, res) => {
   }
 };
 
-// Crear nueva tarea
+
 export const createTask = async (req, res) => {
   try {
     const task = new Task(req.body);
@@ -42,7 +42,7 @@ export const createTask = async (req, res) => {
   }
 };
 
-// Actualizar tarea
+
 export const updateTask = async (req, res) => {
   try {
     const task = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -55,7 +55,6 @@ export const updateTask = async (req, res) => {
   }
 };
 
-// Eliminar tarea
 export const deleteTask = async (req, res) => {
   try {
     const task = await Task.findByIdAndDelete(req.params.id);
@@ -68,8 +67,7 @@ export const deleteTask = async (req, res) => {
   }
 };
 
-// Búsqueda avanzada de tareas
-// GET /api/tasks/search?text=&status=&priority=&project=
+
 export const searchTasks = async (req, res) => {
   try {
     const { text, status, priority, project } = req.query;
@@ -91,7 +89,7 @@ export const searchTasks = async (req, res) => {
       .populate("project", "name")
       .populate("assignedTo", "username");
 
-    // Mapear para frontend
+
     const results = tasks.map(t => ({
       _id: t._id,
       title: t.title,

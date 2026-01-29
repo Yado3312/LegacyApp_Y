@@ -11,16 +11,12 @@ import reportRoutes from './routes/report.routes.js';
 
 const app = express();
 
-/* ======================
-   MIDDLEWARES GLOBALES
-====================== */
+
 app.use(cors());
-app.use(express.json()); // body parser
+app.use(express.json()); 
 app.use(express.urlencoded({ extended: true }));
 
-/* ======================
-   RUTAS
-====================== */
+
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/projects', projectRoutes);
@@ -29,11 +25,8 @@ app.use('/api/comments', commentRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/reports', reportRoutes);
 
-/* ======================
-   RUTA DE SALUD
-====================== */
 app.get('/', (req, res) => {
-  res.json({ status: 'API running 🚀' });
+  res.json({ status: 'API running' });
 });
 
 export default app;

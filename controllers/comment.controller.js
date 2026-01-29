@@ -1,6 +1,6 @@
 import Comment from "../models/Comment.js";
 
-// Obtener comentarios por tarea
+
 export const getCommentsByTask = async (req, res) => {
   try {
     const comments = await Comment.find({ task: req.params.taskId })
@@ -13,7 +13,7 @@ export const getCommentsByTask = async (req, res) => {
   }
 };
 
-// Crear un comentario
+
 export const createComment = async (req, res) => {
   try {
     const { task, comment } = req.body;
