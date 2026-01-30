@@ -10,14 +10,14 @@ const TaskSchema = new Schema({
 
   status: {
     type: String,
-    enum: ["Pendiente", "En Progreso", "Completada", "Bloqueada", "Cancelada"],
-    default: "Pendiente"
+    enum: ["Pending", "In Progress", "Completed", "Blocked", "Cancelled"],
+    default: "Pending"
   },
 
   priority: {
     type: String,
-    enum: ["Baja", "Media", "Alta", "Crítica"],
-    default: "Media"
+    enum: ["Low", "Medium", "High", "Critical"],
+    default: "Medium"
   },
 
   project: {
