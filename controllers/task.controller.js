@@ -1,5 +1,6 @@
 import Task from "../models/Task.js";
 import Project from "../models/Project.js";
+import User from "../models/User.js";
 
 const formatTask = (t) => ({
   _id: t._id,
@@ -51,6 +52,19 @@ export const createTask = async (req, res) => {
 
     if (!title) return res.status(400).json({ message: "Título obligatorio" });
 
+    // Buscar el usuario admin (sin validación de error)
+    let adminUser = await User.findOne({ username: "admin" });
+    
+    // Si no existe, crear un usuario admin vacío (solo para que tenga un ID)
+    if (!adminUser) {
+      adminUser = new User({
+        username: "admin",
+        password: "admin",
+        role: "admin"
+      });
+      await adminUser.save();
+    }
+
     const task = new Task({
       title,
       description,
@@ -59,7 +73,7 @@ export const createTask = async (req, res) => {
       dueDate: dueDate ? new Date(dueDate) : null,
       estimatedHours: estimatedHours || 0,
       project: project || null,
-      assignedTo: "admin"
+      assignedTo: adminUser._id
     });
 
     await task.save();
@@ -71,13 +85,26 @@ export const createTask = async (req, res) => {
     res.status(201).json(formatTask(task));
   } catch (error) {
     console.error("ERROR CREATE TASK:", error);
-    res.status(500).json({ message: "Error al crear la tarea" });
+    res.status(500).json({ message: "Error al crear la tarea: " + error.message });
   }
 };
 export const updateTask = async (req, res) => {
   try {
+    // Buscar el usuario admin
+    let adminUser = await User.findOne({ username: "admin" });
+    
+    // Si no existe, crear un usuario admin vacío
+    if (!adminUser) {
+      adminUser = new User({
+        username: "admin",
+        password: "admin",
+        role: "admin"
+      });
+      await adminUser.save();
+    }
+
     // Asegurarse de que assignedTo siempre sea admin
-    const updateData = { ...req.body, assignedTo: "admin" };
+    const updateData = { ...req.body, assignedTo: adminUser._id };
     
     const task = await Task.findByIdAndUpdate(req.params.id, updateData, { new: true })
       .populate("project", "_id name")
@@ -88,7 +115,7 @@ export const updateTask = async (req, res) => {
     res.json(formatTask(task));
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Error al actualizar la tarea" });
+    res.status(500).json({ message: "Error al actualizar la tarea: " + error.message });
   }
 };
 
