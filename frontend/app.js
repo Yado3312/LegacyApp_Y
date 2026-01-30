@@ -123,6 +123,8 @@ async function addTask() {
 
     // Convertir project vacío a null
     task.project = task.project || null;
+    console.log("TASK A ENVIAR:", task);
+
 
     try {
         await fetch(API_URL, {
