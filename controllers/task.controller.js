@@ -1,5 +1,6 @@
 import Task from "../models/Task.js";
 import Project from "../models/Project.js";
+import User from "../models/User.js";
 
 const formatTask = (t) => ({
   _id: t._id,
@@ -51,6 +52,10 @@ export const createTask = async (req, res) => {
 
     if (!title) return res.status(400).json({ message: "Título obligatorio" });
 
+    // Buscar el usuario admin
+    const adminUser = await User.findOne({ username: "admin" });
+    if (!adminUser) return res.status(400).json({ message: "Usuario admin no encontrado" });
+
     const task = new Task({
       title,
       description,
@@ -58,22 +63,32 @@ export const createTask = async (req, res) => {
       priority,
       dueDate: dueDate ? new Date(dueDate) : null,
       estimatedHours: estimatedHours || 0,
-      project: project || null
+      project: project || null,
+      assignedTo: adminUser._id
     });
 
     await task.save();
+    
+    // Poblar antes de responder
+    await task.populate("project", "_id name");
+    await task.populate("assignedTo", "_id username");
 
-    res.status(201).json(task);
+    res.status(201).json(formatTask(task));
   } catch (error) {
     console.error("ERROR CREATE TASK:", error);
     res.status(500).json({ message: "Error al crear la tarea" });
   }
 };
-
-
 export const updateTask = async (req, res) => {
   try {
-    const task = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true })
+    // Buscar el usuario admin
+    const adminUser = await User.findOne({ username: "admin" });
+    if (!adminUser) return res.status(400).json({ message: "Usuario admin no encontrado" });
+
+    // Asegurarse de que assignedTo siempre sea admin
+    const updateData = { ...req.body, assignedTo: adminUser._id };
+    
+    const task = await Task.findByIdAndUpdate(req.params.id, updateData, { new: true })
       .populate("project", "_id name")
       .populate("assignedTo", "_id username");
 
