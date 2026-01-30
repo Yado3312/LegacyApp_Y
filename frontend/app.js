@@ -1,3 +1,4 @@
+const API_BASE = window.location.origin;
 
 function showTab(tabName) {
 
@@ -207,7 +208,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-const API_BASE = window.location.origin;
 
 
 const PROJECTS_API = `${API_BASE}/api/projects`;
