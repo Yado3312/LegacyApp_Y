@@ -115,10 +115,14 @@ function getTaskFromForm() {
 async function addTask() {
     const task = getTaskFromForm();
 
+    // Campo obligatorio
     if (!task.title) {
         alert("El título es obligatorio");
         return;
     }
+
+    // Convertir project vacío a null
+    task.project = task.project || null;
 
     try {
         await fetch(API_URL, {
@@ -133,6 +137,7 @@ async function addTask() {
         console.error("Error al agregar tarea:", error);
     }
 }
+
 
 
 async function updateTask() {
