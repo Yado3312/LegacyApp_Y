@@ -35,7 +35,6 @@ function login() {
     const password = document.getElementById("password").value;
 
     if (!username || !password) {
-        alert("Usuario y contraseña requeridos");
         return;
     }
 
@@ -61,7 +60,7 @@ async function loadTasks() {
         updateStats(tasks);
         fillCommentsTaskSelect();
     } catch (error) {
-        console.error("Error al cargar tareas:", error);
+        console.error("Error loading tasks:", error);
     }
 }
 
@@ -105,7 +104,7 @@ function selectTask(task) {
 
 
 function getTaskFromForm() {
-    const projectValue = document.getElementById("taskProject").value; // select de proyecto
+    const projectValue = document.getElementById("taskProject").value;
 
     return {
         title: document.getElementById("taskTitle").value,
@@ -123,7 +122,6 @@ async function addTask() {
     const task = getTaskFromForm();
 
     if (!task.title) {
-        alert("El título es obligatorio");
         return;
     }
 
@@ -136,8 +134,7 @@ async function addTask() {
 
         if (!response.ok) {
             const err = await response.json();
-            console.error("Error al agregar tarea:", err);
-            alert("Error al agregar tarea: " + (err.message || "Revisa la consola"));
+            console.error("Error adding task:", err);
             return;
         }
 
@@ -147,10 +144,9 @@ async function addTask() {
         clearTaskForm();
         loadTasks();
 
-        console.log("Tarea creada correctamente:", createdTask);
+        console.log("Task created successfully:", createdTask);
     } catch (error) {
-        console.error("Error al agregar tarea:", error);
-        alert("Error al agregar tarea: revisa la consola");
+        console.error("Error adding task:", error);
     }
 }
 
@@ -158,7 +154,6 @@ async function addTask() {
 
 async function updateTask() {
     if (!selectedTaskId) {
-        alert("Selecciona una tarea");
         return;
     }
 
@@ -174,18 +169,17 @@ async function updateTask() {
         clearTaskForm();
         loadTasks();
     } catch (error) {
-        console.error("Error al actualizar tarea:", error);
+        console.error("Error updating task:", error);
     }
 }
 
 
 async function deleteTask() {
     if (!selectedTaskId) {
-        alert("Selecciona una tarea");
         return;
     }
 
-    if (!confirm("¿Eliminar esta tarea?")) return;
+    if (!confirm("Delete this task?")) return;
 
     try {
         await fetch(`${API_URL}/${selectedTaskId}`, {
@@ -195,7 +189,7 @@ async function deleteTask() {
         clearTaskForm();
         loadTasks();
     } catch (error) {
-        console.error("Error al eliminar tarea:", error);
+        console.error("Error deleting task:", error);
     }
 }
 
@@ -205,8 +199,8 @@ function clearTaskForm() {
 
     document.getElementById("taskTitle").value = "";
     document.getElementById("taskDescription").value = "";
-    document.getElementById("taskStatus").value = "Pendiente";
-    document.getElementById("taskPriority").value = "Media";
+    document.getElementById("taskStatus").value = "Pending";
+    document.getElementById("taskPriority").value = "Medium";
     document.getElementById("taskDueDate").value = "";
     document.getElementById("taskHours").value = "";
 }
@@ -214,20 +208,27 @@ function clearTaskForm() {
 
 function updateStats(tasks) {
     const total = tasks.length;
-    const completed = tasks.filter(t => t.status === "Completada").length;
-    const pending = tasks.filter(t => t.status === "Pendiente").length;
+    const completed = tasks.filter(t => t.status === "Completed").length;
+    const pending = tasks.filter(t => t.status === "Pending").length;
 
     document.getElementById("statsText").innerText =
-        `Total: ${total} | Pendientes: ${pending} | Completadas: ${completed}`;
+        `Total: ${total} | Pending: ${pending} | Completed: ${completed}`;
 }
 
 
 document.addEventListener("DOMContentLoaded", () => {
-    // No auto-load, espera login
+    // Event listeners for advanced search
+    const filterBtn = document.getElementById("filterBtn");
+    const clearFilterBtn = document.getElementById("clearFilterBtn");
+    
+    if (filterBtn) {
+        filterBtn.addEventListener("click", searchTasks);
+    }
+    
+    if (clearFilterBtn) {
+        clearFilterBtn.addEventListener("click", clearSearchFilters);
+    }
 });
-
-
-
 
 
 
@@ -245,7 +246,7 @@ async function loadProjects() {
         renderProjectsTable(projects);
         fillProjectsSelect(projects);
     } catch (error) {
-        console.error("Error al cargar proyectos:", error);
+        console.error("Error loading projects:", error);
     }
 }
 
@@ -297,7 +298,6 @@ async function addProject() {
     const project = getProjectFromForm();
 
     if (!project.name) {
-        alert("El nombre del proyecto es obligatorio");
         return;
     }
 
@@ -311,7 +311,7 @@ async function addProject() {
         clearProjectForm();
         loadProjects();
     } catch (error) {
-        console.error("Error al agregar proyecto:", error);
+        console.error("Error adding project:", error);
     }
 }
 
@@ -320,7 +320,6 @@ async function addProject() {
  *************************/
 async function updateProject() {
     if (!selectedProjectId) {
-        alert("Selecciona un proyecto");
         return;
     }
 
@@ -336,7 +335,7 @@ async function updateProject() {
         clearProjectForm();
         loadProjects();
     } catch (error) {
-        console.error("Error al actualizar proyecto:", error);
+        console.error("Error updating project:", error);
     }
 }
 
@@ -345,11 +344,10 @@ async function updateProject() {
  *************************/
 async function deleteProject() {
     if (!selectedProjectId) {
-        alert("Selecciona un proyecto");
         return;
     }
 
-    if (!confirm("¿Eliminar este proyecto?")) return;
+    if (!confirm("Delete this project?")) return;
 
     try {
         await fetch(`${PROJECTS_API}/${selectedProjectId}`, {
@@ -359,7 +357,7 @@ async function deleteProject() {
         clearProjectForm();
         loadProjects();
     } catch (error) {
-        console.error("Error al eliminar proyecto:", error);
+        console.error("Error deleting project:", error);
     }
 }
 
@@ -380,14 +378,14 @@ function fillProjectsSelect(projects) {
     const searchSelect = document.getElementById("searchProject");
 
     if (taskSelect) {
-        taskSelect.innerHTML = `<option value="">-- Sin proyecto --</option>`;
+        taskSelect.innerHTML = `<option value="">-- No Project --</option>`;
         projects.forEach(p => {
             taskSelect.innerHTML += `<option value="${p._id}">${p.name}</option>`;
         });
     }
 
     if (searchSelect) {
-        searchSelect.innerHTML = `<option value="">Todos</option>`;
+        searchSelect.innerHTML = `<option value="">All</option>`;
         projects.forEach(p => {
             searchSelect.innerHTML += `<option value="${p._id}">${p.name}</option>`;
         });
@@ -398,23 +396,23 @@ function fillProjectsSelect(projects) {
 ////////////////////////////////////////////////////////////
 const API_URL_COMMENTS = `${API_BASE}/api/comments`;
 
-// Llenar dropdown de tareas en comentarios
+// Fill task dropdown in comments
 async function fillCommentsTaskSelect() {
     try {
         const response = await fetch(API_URL);
         const tasks = await response.json();
         const select = document.getElementById("commentTaskSelect");
         
-        select.innerHTML = `<option value="">-- Selecciona una tarea --</option>`;
+        select.innerHTML = `<option value="">-- Select a task --</option>`;
         tasks.forEach(task => {
             select.innerHTML += `<option value="${task._id}">${task.title}</option>`;
         });
     } catch (error) {
-        console.error("Error al cargar tareas para comentarios:", error);
+        console.error("Error loading tasks for comments:", error);
     }
 }
 
-// Seleccionar tarea desde el dropdown
+// Select task from dropdown
 function selectCommentTask() {
     const taskId = document.getElementById("commentTaskSelect").value;
     document.getElementById("commentTaskId").value = taskId;
@@ -424,13 +422,12 @@ function selectCommentTask() {
     }
 }
 
-// Agregar un comentario
+// Add a comment
 async function addComment() {
     const taskId = document.getElementById("commentTaskId").value.trim();
     const text = document.getElementById("commentText").value.trim();
 
     if (!taskId || !text) {
-        alert("Debes seleccionar una tarea e ingresar un comentario");
         return;
     }
 
@@ -441,18 +438,16 @@ async function addComment() {
             body: JSON.stringify({ task: taskId, comment: text })
         });
 
-        if (!response.ok) throw new Error("Error al agregar comentario");
+        if (!response.ok) throw new Error("Error adding comment");
 
-        alert("Comentario agregado exitosamente");
         document.getElementById("commentText").value = "";
         loadComments(taskId);
     } catch (error) {
         console.error(error);
-        alert("No se pudo agregar el comentario");
     }
 }
 
-// Cargar comentarios de una tarea específica
+// Load comments for a specific task
 async function loadComments(specificTaskId = null) {
     let taskId = specificTaskId;
 
@@ -461,28 +456,26 @@ async function loadComments(specificTaskId = null) {
     }
 
     if (!taskId) {
-        alert("Debes seleccionar una tarea válida para cargar comentarios");
         return;
     }
 
     try {
         const response = await fetch(`${API_URL_COMMENTS}/${taskId}`);
-        if (!response.ok) throw new Error("Error al cargar comentarios");
+        if (!response.ok) throw new Error("Error loading comments");
 
         const comments = await response.json();
         const commentsArea = document.getElementById("commentsArea");
         commentsArea.value = "";
 
         if (comments.length === 0) {
-            commentsArea.value = "No hay comentarios para esta tarea.";
+            commentsArea.value = "No comments for this task.";
         } else {
             comments.forEach(c => {
-                commentsArea.value += `ID Comentario: ${c._id}\nTexto: ${c.comment}\nFecha: ${new Date(c.createdAt).toLocaleString()}\n---------------------\n`;
+                commentsArea.value += `Comment ID: ${c._id}\nText: ${c.comment}\nDate: ${new Date(c.createdAt).toLocaleString()}\n---------------------\n`;
             });
         }
     } catch (error) {
         console.error(error);
-        alert("No se pudieron cargar los comentarios");
     }
 }
 
@@ -557,10 +550,10 @@ async function loadComments(specificTaskId = null) {
 
 const API_URL_REPORTS = `${API_BASE}/api/reports`;
 
-// Generar reporte según tipo
+// Generate report based on type
 async function generateReport(type) {
     const reportsArea = document.getElementById("reportsArea");
-    reportsArea.value = "Cargando reporte...";
+    reportsArea.value = "Loading report...";
 
     let url = "";
 
@@ -575,51 +568,50 @@ async function generateReport(type) {
             url = `${API_URL_REPORTS}/users`;
             break;
         default:
-            reportsArea.value = "Tipo de reporte no válido";
+            reportsArea.value = "Invalid report type";
             return;
     }
 
     try {
         const response = await fetch(url);
-        if (!response.ok) throw new Error("Error al generar reporte");
+        if (!response.ok) throw new Error("Error generating report");
 
         const data = await response.json();
         reportsArea.value = formatReport(type, data);
     } catch (error) {
         console.error(error);
-        reportsArea.value = "No se pudo generar el reporte";
+        reportsArea.value = "Could not generate the report";
     }
 }
 
-// Función auxiliar para mostrar el reporte de forma legible
+// Helper function to display the report in a readable format
 function formatReport(type, data) {
     let output = "";
 
     switch(type) {
         case "tasks":
-            output += `--- REPORTE DE TAREAS ---\n`;
-            output += `Total de Tareas: ${data.totalTasks}\n`;
-            output += `Tareas Completadas: ${data.completedTasks}\n`;
-            output += `Tareas Pendientes: ${data.pendingTasks}\n`;
+            output += `--- TASK REPORT ---\n`;
+            output += `Total Tasks: ${data.totalTasks}\n`;
+            output += `Completed Tasks: ${data.completedTasks}\n`;
+            output += `Pending Tasks: ${data.pendingTasks}\n`;
             break;
         case "projects":
-            output += `--- REPORTE DE PROYECTOS ---\n`;
-            output += `Total de Proyectos: ${data.totalProjects}\n`;
+            output += `--- PROJECT REPORT ---\n`;
+            output += `Total Projects: ${data.totalProjects}\n`;
             break;
         case "users":
-            output += `--- REPORTE DE USUARIOS ---\n`;
-            output += `Usuarios Activos: ${data.activeUsers}\n`;
+            output += `--- USER REPORT ---\n`;
+            output += `Active Users: ${data.activeUsers}\n`;
             break;
     }
 
     return output;
 }
 
-// Exportar a CSV opcional
+// Export to CSV
 function exportCSV() {
     const text = document.getElementById("reportsArea").value;
     if (!text) {
-        alert("Primero genera un reporte para exportar");
         return;
     }
 
@@ -628,7 +620,7 @@ function exportCSV() {
 
     const link = document.createElement("a");
     link.setAttribute("href", url);
-    link.setAttribute("download", "reporte.csv");
+    link.setAttribute("download", "report.csv");
     link.style.display = "none";
 
     document.body.appendChild(link);
@@ -639,7 +631,19 @@ function exportCSV() {
 
 /////////////////////////////////////////////////////
 
-// Función para buscar tareas según los filtros
+// Function to clear search filters
+function clearSearchFilters() {
+    document.getElementById("searchText").value = "";
+    document.getElementById("searchStatus").value = "";
+    document.getElementById("searchPriority").value = "";
+    document.getElementById("searchProject").value = "";
+    
+    // Clear results table
+    const tbody = document.getElementById("searchTableBody");
+    tbody.innerHTML = "";
+}
+
+// Function to search tasks based on filters
 async function searchTasks() {
     try {
         const searchText = document.getElementById("searchText").value.trim();
@@ -647,25 +651,33 @@ async function searchTasks() {
         const searchPriority = document.getElementById("searchPriority").value;
         const searchProject = document.getElementById("searchProject").value;
 
-        // Construimos los parámetros de búsqueda
+        // Build search parameters
         const params = new URLSearchParams();
 
         if (searchText) params.append("text", searchText);
         if (searchStatus) params.append("status", searchStatus);
         if (searchPriority) params.append("priority", searchPriority);
-        if (searchProject && searchProject !== "0") params.append("project", searchProject);
+        if (searchProject) params.append("project", searchProject);
 
-        const response = await fetch( `${API_BASE}/api/tasks/search?${params.toString()}`);
+        const url = `${API_BASE}/api/tasks/search?${params.toString()}`;
+        const response = await fetch(url);
         
-        if (!response.ok) throw new Error("Error al buscar tareas");
+        if (!response.ok) throw new Error("Error searching tasks");
 
         const tasks = await response.json();
 
-        // Limpiamos la tabla
+        // Clear the table
         const tbody = document.getElementById("searchTableBody");
         tbody.innerHTML = "";
 
-        // Llenamos la tabla con los resultados
+        if (tasks.length === 0) {
+            const row = document.createElement("tr");
+            row.innerHTML = `<td colspan="5" class="text-center">No results found</td>`;
+            tbody.appendChild(row);
+            return;
+        }
+
+        // Fill the table with results
         tasks.forEach(task => {
             const row = document.createElement("tr");
             row.innerHTML = `
@@ -673,13 +685,12 @@ async function searchTasks() {
                 <td>${task.title}</td>
                 <td>${task.status}</td>
                 <td>${task.priority}</td>
-                <td>${task.projectName || ""}</td>
+                <td>${task.projectName || "-"}</td>
             `;
             tbody.appendChild(row);
         });
 
     } catch (error) {
-        alert(error.message);
         console.error(error);
     }
 }

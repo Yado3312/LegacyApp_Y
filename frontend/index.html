@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Task Manager Legacy - Sistema Simple</title>
+    <title>Task Manager Legacy - Simple System</title>
 
     <!-- CSS propio -->
     <link rel="stylesheet" href="style.css">
@@ -25,79 +25,79 @@
 <div class="container my-3">
     <h1 class="text-center mb-4">Task Manager Legacy</h1>
 
-    <!-- Panel de Login -->
+    <!-- Login Panel -->
     <div id="loginPanel" class="panel border p-3">
         <h2>Login</h2>
         <div class="form-group mb-2">
-            <label>Usuario:</label>
+            <label>Username:</label>
             <input type="text" id="username" value="admin" class="form-control">
         </div>
         <div class="form-group mb-2">
-            <label>Contraseña:</label>
+            <label>Password:</label>
             <input type="password" id="password" value="admin" class="form-control">
         </div>
-        <button onclick="login()" class="btn btn-primary mt-2">Entrar</button>
+        <button onclick="login()" class="btn btn-primary mt-2">Sign In</button>
     </div>
 
-    <!-- Panel Principal -->
+    <!-- Main Panel -->
     <div id="mainPanel" class="panel" style="display:none;">
         <div class="header d-flex justify-content-between align-items-center mb-3 p-2 bg-light border">
-            <span>Usuario: <strong id="currentUser"></strong></span>
-            <button onclick="logout()" class="btn btn-danger btn-sm">Salir</button>
+            <span>User: <strong id="currentUser"></strong></span>
+            <button onclick="logout()" class="btn btn-danger btn-sm">Sign Out</button>
         </div>
 
-        <!-- Pestañas -->
+        <!-- Tabs -->
         <ul class="nav nav-tabs mb-3" id="mainTabs">
-            <li class="nav-item"><button class="nav-link active" onclick="showTab('tasks')">Tareas</button></li>
-            <li class="nav-item"><button class="nav-link" onclick="showTab('projects')">Proyectos</button></li>
-            <li class="nav-item"><button class="nav-link" onclick="showTab('comments')">Comentarios</button></li>
-            <li class="nav-item"><button class="nav-link" onclick="showTab('search')">Búsqueda</button></li>
-            <li class="nav-item"><button class="nav-link" onclick="showTab('reports')">Reportes</button></li>
+            <li class="nav-item"><button class="nav-link active" onclick="showTab('tasks')">Tasks</button></li>
+            <li class="nav-item"><button class="nav-link" onclick="showTab('projects')">Projects</button></li>
+            <li class="nav-item"><button class="nav-link" onclick="showTab('comments')">Comments</button></li>
+            <li class="nav-item"><button class="nav-link" onclick="showTab('search')">Advanced Search</button></li>
+            <li class="nav-item"><button class="nav-link" onclick="showTab('reports')">Reports</button></li>
         </ul>
 
-        <!-- TAB: Tareas -->
+        <!-- TAB: Tasks -->
         <div id="tasksTab" class="tab-content active">
-            <h2>Gestión de Tareas</h2>
+            <h2>Task Management</h2>
             <div class="form-section border p-3 mb-3 bg-light">
-                <h3>Nueva/Editar Tarea</h3>
+                <h3>New/Edit Task</h3>
                 <div class="row g-2">
-                    <div class="col-md-6"><label>Título:</label><input type="text" id="taskTitle" class="form-control"></div>
-                    <div class="col-md-6"><label>Descripción:</label><textarea id="taskDescription" rows="2" class="form-control"></textarea></div>
-                    <div class="col-md-3"><label>Estado:</label><select id="taskStatus" class="form-select">
-                        <option>Pendiente</option>
-                        <option>En Progreso</option>
-                        <option>Completada</option>
-                        <option>Bloqueada</option>
-                        <option>Cancelada</option>
+                    <div class="col-md-6"><label>Title:</label><input type="text" id="taskTitle" class="form-control"></div>
+                    <div class="col-md-6"><label>Description:</label><textarea id="taskDescription" rows="2" class="form-control"></textarea></div>
+                    <div class="col-md-3"><label>Status:</label><select id="taskStatus" class="form-select">
+                        <option>Pending</option>
+                        <option>In Progress</option>
+                        <option>Completed</option>
+                        <option>Blocked</option>
+                        <option>Cancelled</option>
                     </select></div>
-                    <div class="col-md-3"><label>Prioridad:</label><select id="taskPriority" class="form-select">
-                        <option>Baja</option><option>Media</option><option>Alta</option><option>Crítica</option>
+                    <div class="col-md-3"><label>Priority:</label><select id="taskPriority" class="form-select">
+                        <option>Low</option><option>Medium</option><option>High</option><option>Critical</option>
                     </select></div>
-                    <div class="col-md-3"><label>Proyecto:</label><select id="taskProject" class="form-select"></select></div>
-                    <div class="col-md-3"><label>Asignado a:</label><select id="taskAssigned" class="form-select"></select></div>
-                    <div class="col-md-3"><label>Fecha Vencimiento:</label><input type="text" id="taskDueDate" placeholder="YYYY-MM-DD" class="form-control"></div>
-                    <div class="col-md-3"><label>Horas Estimadas:</label><input type="number" id="taskHours" step="0.5" class="form-control"></div>
+                    <div class="col-md-3"><label>Project:</label><select id="taskProject" class="form-select"></select></div>
+                    <div class="col-md-3"><label>Assigned To:</label><select id="taskAssigned" class="form-select"></select></div>
+                    <div class="col-md-3"><label>Due Date:</label><input type="text" id="taskDueDate" placeholder="YYYY-MM-DD" class="form-control"></div>
+                    <div class="col-md-3"><label>Estimated Hours:</label><input type="number" id="taskHours" step="0.5" class="form-control"></div>
                 </div>
                 <div class="mt-2">
-                    <button onclick="addTask()" class="btn btn-success btn-sm">Agregar</button>
-                    <button onclick="updateTask()" class="btn btn-primary btn-sm">Actualizar</button>
-                    <button onclick="deleteTask()" class="btn btn-danger btn-sm">Eliminar</button>
-                    <button onclick="clearTaskForm()" class="btn btn-secondary btn-sm">Limpiar</button>
+                    <button onclick="addTask()" class="btn btn-success btn-sm">Add</button>
+                    <button onclick="updateTask()" class="btn btn-primary btn-sm">Update</button>
+                    <button onclick="deleteTask()" class="btn btn-danger btn-sm">Delete</button>
+                    <button onclick="clearTaskForm()" class="btn btn-secondary btn-sm">Clear</button>
                 </div>
             </div>
 
             <div class="table-section border p-2 mb-3">
-                <h3>Lista de Tareas</h3>
+                <h3>Task List</h3>
                 <table id="tasksTable" class="table table-striped table-bordered">
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Título</th>
-                            <th>Estado</th>
-                            <th>Prioridad</th>
-                            <th>Proyecto</th>
-                            <th>Asignado</th>
-                            <th>Vencimiento</th>
+                            <th>Title</th>
+                            <th>Status</th>
+                            <th>Priority</th>
+                            <th>Project</th>
+                            <th>Assigned</th>
+                            <th>Due Date</th>
                         </tr>
                     </thead>
                     <tbody id="tasksTableBody"></tbody>
@@ -105,90 +105,90 @@
             </div>
 
             <div class="stats border p-2 bg-light">
-                <strong>Estadísticas:</strong> <span id="statsText"></span>
+                <strong>Statistics:</strong> <span id="statsText"></span>
             </div>
         </div>
 
-        <!-- TAB: Proyectos -->
+        <!-- TAB: Projects -->
         <div id="projectsTab" class="tab-content">
-            <h2>Gestión de Proyectos</h2>
+            <h2>Project Management</h2>
             <div class="form-section border p-3 mb-3 bg-light">
-                <div class="mb-2"><label>Nombre:</label><input type="text" id="projectName" class="form-control"></div>
-                <div class="mb-2"><label>Descripción:</label><textarea id="projectDescription" rows="2" class="form-control"></textarea></div>
-                <button onclick="addProject()" class="btn btn-success btn-sm">Agregar</button>
-                <button onclick="updateProject()" class="btn btn-primary btn-sm">Actualizar</button>
-                <button onclick="deleteProject()" class="btn btn-danger btn-sm">Eliminar</button>
+                <div class="mb-2"><label>Name:</label><input type="text" id="projectName" class="form-control"></div>
+                <div class="mb-2"><label>Description:</label><textarea id="projectDescription" rows="2" class="form-control"></textarea></div>
+                <button onclick="addProject()" class="btn btn-success btn-sm">Add</button>
+                <button onclick="updateProject()" class="btn btn-primary btn-sm">Update</button>
+                <button onclick="deleteProject()" class="btn btn-danger btn-sm">Delete</button>
             </div>
             <div class="table-section border p-2">
                 <table class="table table-striped table-bordered">
-                    <thead><tr><th>ID</th><th>Nombre</th><th>Descripción</th></tr></thead>
+                    <thead><tr><th>ID</th><th>Name</th><th>Description</th></tr></thead>
                     <tbody id="projectsTableBody"></tbody>
                 </table>
             </div>
         </div>
 
-        <!-- TAB: Comentarios -->
+        <!-- TAB: Comments -->
         <div id="commentsTab" class="tab-content">
-            <h2>Comentarios de Tareas</h2>
+            <h2>Task Comments</h2>
             <div class="form-section border p-3 mb-3 bg-light">
                 <div class="row g-2">
                     <div class="col-md-6">
-                        <label>Seleccionar Tarea:</label>
+                        <label>Select Task:</label>
                         <select id="commentTaskSelect" class="form-select" onchange="selectCommentTask()">
-                            <option value="">-- Selecciona una tarea --</option>
+                            <option value="">-- Select a task --</option>
                         </select>
                     </div>
                     <div class="col-md-6">
-                        <label>ID Tarea (automático):</label>
+                        <label>Task ID (automatic):</label>
                         <input type="text" id="commentTaskId" class="form-control" readonly>
                     </div>
                 </div>
-                <div class="mb-2 mt-2"><label>Comentario:</label><textarea id="commentText" rows="2" class="form-control"></textarea></div>
-                <button onclick="addComment()" class="btn btn-success btn-sm">Agregar Comentario</button>
-                <button onclick="loadComments()" class="btn btn-primary btn-sm">Cargar Comentarios</button>
+                <div class="mb-2 mt-2"><label>Comment:</label><textarea id="commentText" rows="2" class="form-control"></textarea></div>
+                <button onclick="addComment()" class="btn btn-success btn-sm">Add Comment</button>
+                <button onclick="loadComments()" class="btn btn-primary btn-sm">Load Comments</button>
             </div>
             <div class="text-area-section border p-2">
-                <h3>Comentarios</h3>
+                <h3>Comments</h3>
                 <textarea id="commentsArea" rows="15" readonly class="form-control"></textarea>
             </div>
         </div>
 
-        <!-- TAB: Búsqueda -->
+        <!-- TAB: Advanced Search -->
         <div id="searchTab" class="tab-content">
-            <h2>Búsqueda Avanzada</h2>
+            <h2>Advanced Search</h2>
             <div class="form-section border p-3 mb-3 bg-light row g-3 align-items-end">
                 <div class="col-md-3">
-                    <label for="searchText" class="form-label">Texto</label>
-                    <input type="text" id="searchText" class="form-control" placeholder="Buscar por título o descripción">
+                    <label for="searchText" class="form-label">Text</label>
+                    <input type="text" id="searchText" class="form-control" placeholder="Search by title or description">
                 </div>
                 <div class="col-md-3">
-                    <label for="searchStatus" class="form-label">Estado</label>
+                    <label for="searchStatus" class="form-label">Status</label>
                     <select id="searchStatus" class="form-select">
-                        <option value="">Todos</option>
-                        <option>Pendiente</option>
-                        <option>En Progreso</option>
-                        <option>Completada</option>
+                        <option value="">All</option>
+                        <option>Pending</option>
+                        <option>In Progress</option>
+                        <option>Completed</option>
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label for="searchPriority" class="form-label">Prioridad</label>
+                    <label for="searchPriority" class="form-label">Priority</label>
                     <select id="searchPriority" class="form-select">
-                        <option value="">Todas</option>
-                        <option>Baja</option>
-                        <option>Media</option>
-                        <option>Alta</option>
-                        <option>Crítica</option>
+                        <option value="">All</option>
+                        <option>Low</option>
+                        <option>Medium</option>
+                        <option>High</option>
+                        <option>Critical</option>
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label for="searchProject" class="form-label">Proyecto</label>
+                    <label for="searchProject" class="form-label">Project</label>
                     <select id="searchProject" class="form-select">
-                        <option value="">Todos</option>
+                        <option value="">All</option>
                     </select>
                 </div>
                 <div class="col-md-12">
-                    <button id="filterBtn" class="btn btn-primary mt-2">Filtrar</button>
-                    <button id="clearFilterBtn" class="btn btn-secondary mt-2">Limpiar</button>
+                    <button id="filterBtn" class="btn btn-primary mt-2">Search</button>
+                    <button id="clearFilterBtn" class="btn btn-secondary mt-2">Clear</button>
                 </div>
             </div>
             <div class="table-section border p-2">
@@ -196,25 +196,25 @@
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Título</th>
-                            <th>Estado</th>
-                            <th>Prioridad</th>
-                            <th>Proyecto</th>
+                            <th>Title</th>
+                            <th>Status</th>
+                            <th>Priority</th>
+                            <th>Project</th>
                         </tr>
                     </thead>
-                    <tbody></tbody>
+                    <tbody id="searchTableBody"></tbody>
                 </table>
             </div>
         </div>
 
-        <!-- TAB: Reportes -->
+        <!-- TAB: Reports -->
         <div id="reportsTab" class="tab-content">
-            <h2>Generación de Reportes</h2>
+            <h2>Report Generation</h2>
             <div class="form-section border p-3 mb-3 bg-light">
-                <button onclick="generateReport('tasks')" class="btn btn-primary btn-sm">Reporte de Tareas</button>
-                <button onclick="generateReport('projects')" class="btn btn-primary btn-sm">Reporte de Proyectos</button>
-                <button onclick="generateReport('users')" class="btn btn-primary btn-sm">Reporte de Usuarios</button>
-                <button onclick="exportCSV()" class="btn btn-secondary btn-sm">Exportar a CSV</button>
+                <button onclick="generateReport('tasks')" class="btn btn-primary btn-sm">Task Report</button>
+                <button onclick="generateReport('projects')" class="btn btn-primary btn-sm">Project Report</button>
+                <button onclick="generateReport('users')" class="btn btn-primary btn-sm">User Report</button>
+                <button onclick="exportCSV()" class="btn btn-secondary btn-sm">Export to CSV</button>
             </div>
             <div class="text-area-section border p-2">
                 <textarea id="reportsArea" rows="20" readonly class="form-control"></textarea>

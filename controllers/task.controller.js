@@ -149,8 +149,8 @@ export const searchTasks = async (req, res) => {
     if (project) filter.project = project;
 
     const tasks = await Task.find(filter)
-      .populate("project", "name")
-      .populate("assignedTo", "username");
+      .populate("project", "_id name")
+      .populate("assignedTo", "_id username");
 
     const results = tasks.map(formatTask);
     res.json(results);

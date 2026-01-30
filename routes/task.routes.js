@@ -10,11 +10,12 @@ import {
 
 const router = Router();
 
+// La ruta de búsqueda debe ir ANTES de /:id para que no se confunda
+router.get("/search", searchTasks);
 router.get("/", getTasks);
 router.get("/:id", getTaskById);
 router.post("/", createTask);
 router.put("/:id", updateTask);
 router.delete("/:id", deleteTask);
-router.get("/tasks/search", searchTasks);
 
 export default router;
