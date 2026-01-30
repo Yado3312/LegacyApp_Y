@@ -101,42 +101,52 @@ function selectTask(task) {
 
 
 function getTaskFromForm() {
+    const projectValue = document.getElementById("taskProject").value; // select de proyecto
+
     return {
         title: document.getElementById("taskTitle").value,
         description: document.getElementById("taskDescription").value,
         status: document.getElementById("taskStatus").value,
         priority: document.getElementById("taskPriority").value,
         dueDate: document.getElementById("taskDueDate").value || null,
-        estimatedHours: Number(document.getElementById("taskHours").value) || 0
+        estimatedHours: Number(document.getElementById("taskHours").value) || 0,
+        project: projectValue !== "" ? projectValue : null, 
+        assignedTo: "admin",   
     };
 }
-
 
 async function addTask() {
     const task = getTaskFromForm();
 
-    // Campo obligatorio
     if (!task.title) {
         alert("El título es obligatorio");
         return;
     }
 
-    // Convertir project vacío a null
-    task.project = task.project || null;
-    console.log("TASK A ENVIAR:", task);
-
-
     try {
-        await fetch(API_URL, {
+        const response = await fetch(API_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(task)
         });
 
+        if (!response.ok) {
+            const err = await response.json();
+            console.error("Error al agregar tarea:", err);
+            alert("Error al agregar tarea: " + (err.message || "Revisa la consola"));
+            return;
+        }
+
+        const createdTask = await response.json();
+
+ 
         clearTaskForm();
         loadTasks();
+
+        console.log("Tarea creada correctamente:", createdTask);
     } catch (error) {
         console.error("Error al agregar tarea:", error);
+        alert("Error al agregar tarea: revisa la consola");
     }
 }
 
