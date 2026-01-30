@@ -76,8 +76,8 @@ function renderTaskTable(tasks) {
             <td>${task.title}</td>
             <td>${task.status}</td>
             <td>${task.priority}</td>
-            <td>-</td>
-            <td>-</td>
+            <td>${task.projectName || "-"}</td>
+            <td>${task.assignedTo || "-"}</td>
             <td>${task.dueDate ? task.dueDate.split("T")[0] : "-"}</td>
         `;
 
@@ -93,6 +93,8 @@ function selectTask(task) {
     document.getElementById("taskDescription").value = task.description || "";
     document.getElementById("taskStatus").value = task.status;
     document.getElementById("taskPriority").value = task.priority;
+    document.getElementById("taskProject").value = task.projectId || "";
+    document.getElementById("taskAssigned").value = task.assignedToId || "";
     document.getElementById("taskDueDate").value =
         task.dueDate ? task.dueDate.split("T")[0] : "";
     document.getElementById("taskHours").value =

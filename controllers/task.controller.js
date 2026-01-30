@@ -7,7 +7,9 @@ const formatTask = (t) => ({
   description: t.description || "",
   status: t.status,
   priority: t.priority,
+  projectId: t.project ? t.project._id : null,
   projectName: t.project ? t.project.name : "",
+  assignedToId: t.assignedTo ? t.assignedTo._id : null,
   assignedTo: t.assignedTo ? t.assignedTo.username : "",
   dueDate: t.dueDate,
   estimatedHours: t.estimatedHours || 0
@@ -16,8 +18,8 @@ const formatTask = (t) => ({
 export const getTasks = async (req, res) => {
   try {
     const tasks = await Task.find()
-      .populate("project", "name")
-      .populate("assignedTo", "username");
+      .populate("project", "_id name")
+      .populate("assignedTo", "_id username");
 
     const formatted = tasks.map(formatTask);
     res.json(formatted);
@@ -30,8 +32,8 @@ export const getTasks = async (req, res) => {
 export const getTaskById = async (req, res) => {
   try {
     const task = await Task.findById(req.params.id)
-      .populate("project", "name")
-      .populate("assignedTo", "username");
+      .populate("project", "_id name")
+      .populate("assignedTo", "_id username");
 
     if (!task) return res.status(404).json({ message: "Tarea no encontrada" });
 
@@ -60,7 +62,7 @@ export const createTask = async (req, res) => {
     });
 
     await task.save();
-    
+
     res.status(201).json(task);
   } catch (error) {
     console.error("ERROR CREATE TASK:", error);
@@ -72,8 +74,8 @@ export const createTask = async (req, res) => {
 export const updateTask = async (req, res) => {
   try {
     const task = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true })
-      .populate("project", "name")
-      .populate("assignedTo", "username");
+      .populate("project", "_id name")
+      .populate("assignedTo", "_id username");
 
     if (!task) return res.status(404).json({ message: "Tarea no encontrada" });
 
