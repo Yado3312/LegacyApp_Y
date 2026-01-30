@@ -1,22 +1,18 @@
-/*************************
- * TAB NAVIGATION
- *************************/
+
 function showTab(tabName) {
-    // Ocultar todos los tab-content
+
     const tabs = document.querySelectorAll('.tab-content');
     tabs.forEach(tab => tab.classList.remove('active'));
 
-    // Quitar active de todos los botones
+
     const buttons = document.querySelectorAll('.tab-button');
     buttons.forEach(btn => btn.classList.remove('active'));
 
-    // Mostrar el tab correcto
-    const tabToShow = document.getElementById(tabName + 'Tab'); // <-- aquí añadimos "Tab"
+    const tabToShow = document.getElementById(tabName + 'Tab'); 
     if(tabToShow) {
         tabToShow.classList.add('active');
     }
 
-    // Poner active en el botón correspondiente
     const btnToActivate = Array.from(buttons).find(btn => btn.getAttribute('onclick').includes(tabName));
     if(btnToActivate) btnToActivate.classList.add('active');
 }
@@ -34,9 +30,7 @@ let selectedTaskId = null;
 
 
 
-/*************************
- * LOGIN (mínimo funcional)
- *************************/
+
 function login() {
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
@@ -58,9 +52,7 @@ function logout() {
     location.reload();
 }
 
-/*************************
- * LOAD TASKS (GET)
- *************************/
+
 async function loadTasks() {
     try {
         const response = await fetch(API_URL);
@@ -72,9 +64,7 @@ async function loadTasks() {
     }
 }
 
-/*************************
- * RENDER TABLE
- *************************/
+
 function renderTaskTable(tasks) {
     const tbody = document.getElementById("tasksTableBody");
     tbody.innerHTML = "";
@@ -97,9 +87,6 @@ function renderTaskTable(tasks) {
     });
 }
 
-/*************************
- * SELECT TASK
- *************************/
 function selectTask(task) {
     selectedTaskId = task._id;
 
@@ -113,9 +100,7 @@ function selectTask(task) {
         task.estimatedHours || "";
 }
 
-/*************************
- * FORM → OBJECT
- *************************/
+
 function getTaskFromForm() {
     return {
         title: document.getElementById("taskTitle").value,
@@ -127,9 +112,7 @@ function getTaskFromForm() {
     };
 }
 
-/*************************
- * ADD TASK (POST)
- *************************/
+
 async function addTask() {
     const task = getTaskFromForm();
 
@@ -152,9 +135,7 @@ async function addTask() {
     }
 }
 
-/*************************
- * UPDATE TASK (PUT)
- *************************/
+
 async function updateTask() {
     if (!selectedTaskId) {
         alert("Selecciona una tarea");
@@ -177,9 +158,7 @@ async function updateTask() {
     }
 }
 
-/*************************
- * DELETE TASK
- *************************/
+
 async function deleteTask() {
     if (!selectedTaskId) {
         alert("Selecciona una tarea");
@@ -200,9 +179,7 @@ async function deleteTask() {
     }
 }
 
-/*************************
- * CLEAR FORM
- *************************/
+
 function clearTaskForm() {
     selectedTaskId = null;
 
@@ -214,9 +191,7 @@ function clearTaskForm() {
     document.getElementById("taskHours").value = "";
 }
 
-/*************************
- * STATS
- *************************/
+
 function updateStats(tasks) {
     const total = tasks.length;
     const completed = tasks.filter(t => t.status === "Completada").length;
@@ -226,9 +201,7 @@ function updateStats(tasks) {
         `Total: ${total} | Pendientes: ${pending} | Completadas: ${completed}`;
 }
 
-/*************************
- * DOM READY
- *************************/
+
 document.addEventListener("DOMContentLoaded", () => {
     // No auto-load, espera login
 });
@@ -236,12 +209,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-///////////////////////////////////////////////////////////////
+const API_BASE = window.location.origin;
 
-/*************************
- * PROJECTS CONFIG
- *************************/
-const PROJECTS_API = "http://localhost:7369/api/projects";
+
+const PROJECTS_API = `${API_BASE}/api/projects`;
+
 let selectedProjectId = null;
 
 /*************************
@@ -405,7 +377,7 @@ function fillProjectsSelect(projects) {
 
 
 ////////////////////////////////////////////////////////////
-const API_URL_COMMENTS = "http://localhost:7369/api/comments";
+const API_URL_COMMENTS = `${API_BASE}/api/comments`;
 
 // Agregar un comentario
 async function addComment() {
@@ -538,7 +510,7 @@ async function loadComments(specificTaskId = null) {
 
 ////////////////////////////////////////////
 
-const API_URL_REPORTS = "http://localhost:7369/api/reports";
+const API_URL_REPORTS = `${API_BASE}/api/reports`;
 
 // Generar reporte según tipo
 async function generateReport(type) {
@@ -638,7 +610,7 @@ async function searchTasks() {
         if (searchPriority) params.append("priority", searchPriority);
         if (searchProject && searchProject !== "0") params.append("project", searchProject);
 
-        const response = await fetch(`http://localhost:7369/api/tasks/search?${params.toString()}`);
+        const response = await fetch( `${API_BASE}/api/tasks/search?${params.toString()}`);
         
         if (!response.ok) throw new Error("Error al buscar tareas");
 
