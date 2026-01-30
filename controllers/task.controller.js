@@ -44,18 +44,31 @@ export const getTaskById = async (req, res) => {
 
 export const createTask = async (req, res) => {
   try {
-    if (!req.body.project) req.body.project = null;
+    const { title, description, status, priority, dueDate, estimatedHours, project } = req.body;
 
-    const task = new Task(req.body);
+    if (!title) return res.status(400).json({ message: "Título obligatorio" });
+
+    const task = new Task({
+      title,
+      description,
+      status,
+      priority,
+      dueDate: dueDate ? new Date(dueDate) : null,
+      estimatedHours: estimatedHours || 0,
+      project: project || null
+    });
+
     await task.save();
 
     await task.populate("project", "name").populate("assignedTo", "username");
+
     res.status(201).json(formatTask(task));
   } catch (error) {
-    console.error("Error en createTask:", error.message);
+    console.error("Error en createTask:", error.message, error);
     res.status(500).json({ message: "Error al crear la tarea" });
   }
 };
+
 
 
 export const updateTask = async (req, res) => {
