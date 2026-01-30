@@ -465,13 +465,25 @@ async function loadComments(specificTaskId = null) {
 
         const comments = await response.json();
         const commentsArea = document.getElementById("commentsArea");
-        commentsArea.value = "";
+        commentsArea.innerHTML = "";
 
         if (comments.length === 0) {
-            commentsArea.value = "No comments for this task.";
+            commentsArea.innerHTML = '<div class="no-items-message">No comments for this task yet.</div>';
         } else {
             comments.forEach(c => {
-                commentsArea.value += `Comment ID: ${c._id}\nText: ${c.comment}\nDate: ${new Date(c.createdAt).toLocaleString()}\n---------------------\n`;
+                const commentCard = document.createElement("div");
+                commentCard.className = "comment-card";
+                const createdDate = new Date(c.createdAt).toLocaleString();
+                commentCard.innerHTML = `
+                    <div class="comment-header">
+                        <span class="comment-id">ID: ${c._id.substring(0, 8)}...</span>
+                        <span class="comment-date">${createdDate}</span>
+                    </div>
+                    <div class="comment-body">
+                        <p>${c.comment}</p>
+                    </div>
+                `;
+                commentsArea.appendChild(commentCard);
             });
         }
     } catch (error) {
@@ -553,7 +565,7 @@ const API_URL_REPORTS = `${API_BASE}/api/reports`;
 // Generate report based on type
 async function generateReport(type) {
     const reportsArea = document.getElementById("reportsArea");
-    reportsArea.value = "Loading report...";
+    reportsArea.innerHTML = '<div class="report-loading">Loading report...</div>';
 
     let url = "";
 
@@ -568,7 +580,7 @@ async function generateReport(type) {
             url = `${API_URL_REPORTS}/users`;
             break;
         default:
-            reportsArea.value = "Invalid report type";
+            reportsArea.innerHTML = '<div class="report-error">Invalid report type</div>';
             return;
     }
 
@@ -577,45 +589,75 @@ async function generateReport(type) {
         if (!response.ok) throw new Error("Error generating report");
 
         const data = await response.json();
-        reportsArea.value = formatReport(type, data);
+        reportsArea.innerHTML = formatReport(type, data);
     } catch (error) {
         console.error(error);
-        reportsArea.value = "Could not generate the report";
+        reportsArea.innerHTML = '<div class="report-error">Could not generate the report</div>';
     }
 }
 
 // Helper function to display the report in a readable format
 function formatReport(type, data) {
-    let output = "";
+    let htmlReport = '<div class="report-container">';
 
     switch(type) {
         case "tasks":
-            output += `--- TASK REPORT ---\n`;
-            output += `Total Tasks: ${data.totalTasks}\n`;
-            output += `Completed Tasks: ${data.completedTasks}\n`;
-            output += `Pending Tasks: ${data.pendingTasks}\n`;
+            htmlReport += `
+                <div class="report-title">Task Report</div>
+                <div class="report-grid">
+                    <div class="report-stat">
+                        <div class="report-stat-value">${data.totalTasks}</div>
+                        <div class="report-stat-label">Total Tasks</div>
+                    </div>
+                    <div class="report-stat">
+                        <div class="report-stat-value">${data.completedTasks}</div>
+                        <div class="report-stat-label">Completed</div>
+                    </div>
+                    <div class="report-stat">
+                        <div class="report-stat-value">${data.pendingTasks}</div>
+                        <div class="report-stat-label">Pending</div>
+                    </div>
+                </div>
+            `;
             break;
         case "projects":
-            output += `--- PROJECT REPORT ---\n`;
-            output += `Total Projects: ${data.totalProjects}\n`;
+            htmlReport += `
+                <div class="report-title">Project Report</div>
+                <div class="report-grid">
+                    <div class="report-stat">
+                        <div class="report-stat-value">${data.totalProjects}</div>
+                        <div class="report-stat-label">Total Projects</div>
+                    </div>
+                </div>
+            `;
             break;
         case "users":
-            output += `--- USER REPORT ---\n`;
-            output += `Active Users: ${data.activeUsers}\n`;
+            htmlReport += `
+                <div class="report-title">User Report</div>
+                <div class="report-grid">
+                    <div class="report-stat">
+                        <div class="report-stat-value">${data.activeUsers}</div>
+                        <div class="report-stat-label">Active Users</div>
+                    </div>
+                </div>
+            `;
             break;
     }
 
-    return output;
+    htmlReport += '</div>';
+    return htmlReport;
 }
 
 // Export to CSV
 function exportCSV() {
-    const text = document.getElementById("reportsArea").value;
-    if (!text) {
+    const reportsArea = document.getElementById("reportsArea");
+    const content = reportsArea.innerText;
+    
+    if (!content || content.trim() === "") {
         return;
     }
 
-    const blob = new Blob([text], { type: "text/csv;charset=utf-8;" });
+    const blob = new Blob([content], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
 
     const link = document.createElement("a");
