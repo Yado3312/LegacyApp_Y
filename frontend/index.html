@@ -131,8 +131,19 @@
         <div id="commentsTab" class="tab-content">
             <h2>Comentarios de Tareas</h2>
             <div class="form-section border p-3 mb-3 bg-light">
-                <div class="mb-2"><label>ID Tarea:</label><input type="text" id="commentTaskId" class="form-control"></div>
-                <div class="mb-2"><label>Comentario:</label><textarea id="commentText" rows="2" class="form-control"></textarea></div>
+                <div class="row g-2">
+                    <div class="col-md-6">
+                        <label>Seleccionar Tarea:</label>
+                        <select id="commentTaskSelect" class="form-select" onchange="selectCommentTask()">
+                            <option value="">-- Selecciona una tarea --</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label>ID Tarea (automático):</label>
+                        <input type="text" id="commentTaskId" class="form-control" readonly>
+                    </div>
+                </div>
+                <div class="mb-2 mt-2"><label>Comentario:</label><textarea id="commentText" rows="2" class="form-control"></textarea></div>
                 <button onclick="addComment()" class="btn btn-success btn-sm">Agregar Comentario</button>
                 <button onclick="loadComments()" class="btn btn-primary btn-sm">Cargar Comentarios</button>
             </div>

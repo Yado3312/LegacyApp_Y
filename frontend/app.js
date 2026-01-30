@@ -45,6 +45,7 @@ function login() {
 
     loadTasks();
     loadProjects();
+    fillCommentsTaskSelect();
 }
 
 function logout() {
@@ -58,6 +59,7 @@ async function loadTasks() {
         const tasks = await response.json();
         renderTaskTable(tasks);
         updateStats(tasks);
+        fillCommentsTaskSelect();
     } catch (error) {
         console.error("Error al cargar tareas:", error);
     }
@@ -396,13 +398,39 @@ function fillProjectsSelect(projects) {
 ////////////////////////////////////////////////////////////
 const API_URL_COMMENTS = `${API_BASE}/api/comments`;
 
+// Llenar dropdown de tareas en comentarios
+async function fillCommentsTaskSelect() {
+    try {
+        const response = await fetch(API_URL);
+        const tasks = await response.json();
+        const select = document.getElementById("commentTaskSelect");
+        
+        select.innerHTML = `<option value="">-- Selecciona una tarea --</option>`;
+        tasks.forEach(task => {
+            select.innerHTML += `<option value="${task._id}">${task.title}</option>`;
+        });
+    } catch (error) {
+        console.error("Error al cargar tareas para comentarios:", error);
+    }
+}
+
+// Seleccionar tarea desde el dropdown
+function selectCommentTask() {
+    const taskId = document.getElementById("commentTaskSelect").value;
+    document.getElementById("commentTaskId").value = taskId;
+    
+    if (taskId) {
+        loadComments(taskId);
+    }
+}
+
 // Agregar un comentario
 async function addComment() {
     const taskId = document.getElementById("commentTaskId").value.trim();
     const text = document.getElementById("commentText").value.trim();
 
     if (!taskId || !text) {
-        alert("Debes ingresar ID de tarea y comentario");
+        alert("Debes seleccionar una tarea e ingresar un comentario");
         return;
     }
 
@@ -433,7 +461,7 @@ async function loadComments(specificTaskId = null) {
     }
 
     if (!taskId) {
-        alert("Debes ingresar un ID de tarea válido para cargar comentarios");
+        alert("Debes seleccionar una tarea válida para cargar comentarios");
         return;
     }
 
