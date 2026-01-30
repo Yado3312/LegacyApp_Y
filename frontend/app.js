@@ -22,10 +22,8 @@ function showTab(tabName) {
 
 //////////////////////////////////////////////////////
 
-const API_URL = "http://localhost:7369/api/tasks";
+const API_URL = `${API_BASE}/api/tasks`;
 let selectedTaskId = null;
-
-
 
 
 
